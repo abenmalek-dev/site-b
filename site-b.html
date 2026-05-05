@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site B — Algiers University</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0a1e; --surface:#130f27; --surface2:#1c1735;
+    --accent:#8b5cf6; --accent2:#ec4899; --accent3:#f59e0b;
+    --success:#10b981; --danger:#ef4444;
+    --text:#f1f5f9; --text2:#94a3b8;
+    --border:rgba(139,92,246,0.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(139,92,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(13,10,30,0.95);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;}
+  .logo-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
+  .logo-sub{font-size:10px;color:var(--accent2);font-family:'DM Mono',monospace;}
+  nav{display:flex;gap:8px;}
+  nav a{padding:7px 14px;border-radius:8px;font-size:12px;font-family:'DM Mono',monospace;text-decoration:none;transition:all 0.2s;border:1px solid rgba(139,92,246,0.2);color:var(--text2);}
+  nav a.active{background:rgba(139,92,246,0.15);color:var(--accent);border-color:rgba(139,92,246,0.4);}
+  nav a:hover{background:rgba(139,92,246,0.08);color:var(--text);}
+  .badge-live{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;color:var(--success);display:flex;align-items:center;gap:6px;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+ 
+  .page{max-width:1200px;margin:0 auto;padding:32px;}
+  .page-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:0.12em;margin-bottom:10px;}
+  .page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:36px;line-height:1.1;margin-bottom:8px;}
+  .page-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .page-desc{color:var(--text2);font-size:14px;margin-bottom:28px;}
+ 
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+  .stat-label{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;letter-spacing:0.08em;margin-bottom:6px;}
+  .stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;}
+  .stat-sub{font-size:11px;color:var(--text2);margin-top:3px;}
+ 
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);}
+  .tab{padding:10px 18px;font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);transition:all 0.2s;margin-bottom:-1px;}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab:hover{color:var(--text);}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+ 
+  .table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+  .table-card.remote{border-color:rgba(236,72,153,0.3);}
+  .table-card.global{border-color:rgba(245,158,11,0.4);}
+  .table-card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(139,92,246,0.04);}
+  .table-card.remote .table-card-header{background:rgba(236,72,153,0.04);border-bottom-color:rgba(236,72,153,0.2);}
+  .table-card.global .table-card-header{background:rgba(245,158,11,0.04);border-bottom-color:rgba(245,158,11,0.2);}
+  .table-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+  .frag-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;}
+  .fb-local{background:rgba(139,92,246,0.15);color:var(--accent);border:1px solid rgba(139,92,246,0.3);}
+  .fb-remote{background:rgba(236,72,153,0.15);color:var(--accent2);border:1px solid rgba(236,72,153,0.3);}
+  .fb-global{background:rgba(245,158,11,0.15);color:var(--accent3);border:1px solid rgba(245,158,11,0.3);}
+  .loading{padding:40px;text-align:center;color:var(--text2);font-family:'DM Mono',monospace;font-size:12px;}
+  .error{padding:20px;color:var(--danger);font-family:'DM Mono',monospace;font-size:12px;background:rgba(239,68,68,0.1);border-radius:8px;margin:16px;}
+  table{width:100%;border-collapse:collapse;}
+  th{padding:10px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:0.1em;border-bottom:1px solid var(--border);}
+  td{padding:11px 16px;border-bottom:1px solid rgba(139,92,246,0.07);font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(139,92,246,0.04);}
+  .pill{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:11px;font-family:'DM Mono',monospace;}
+  .pill-purple{background:rgba(139,92,246,0.15);color:var(--accent);}
+  .pill-pink{background:rgba(236,72,153,0.15);color:var(--accent2);}
+  .pill-blue{background:rgba(59,130,246,0.15);color:#60a5fa;}
+  .pill-green{background:rgba(16,185,129,0.15);color:var(--success);}
+  .pill-amber{background:rgba(245,158,11,0.15);color:var(--accent3);}
+  .remote-tag{font-size:10px;font-family:'DM Mono',monospace;color:var(--accent2);background:rgba(236,72,153,0.1);padding:2px 6px;border-radius:4px;border:1px solid rgba(236,72,153,0.2);}
+ 
+  .sql-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .sql-panel-header{padding:12px 18px;background:rgba(139,92,246,0.04);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+  .sql-dot{width:8px;height:8px;border-radius:50%;}
+  pre{padding:20px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;overflow-x:auto;color:#e2e8f0;}
+  .kw{color:#a78bfa;} .fn{color:#34d399;} .str{color:#fbbf24;} .cm{color:#475569;} .remote-kw{color:#ec4899;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">AU</div>
+    <div>
+      <div class="logo-title">Algiers University</div>
+      <div class="logo-sub">SITE B · south_user · FREEPDB1</div>
+    </div>
+  </div>
+  <nav>
+    <a href="/">Home</a>
+    <a href="site-a.html">Site A</a>
+    <a href="site-b.html" class="active">Site B</a>
+    <a href="site-c.html">Site C</a>
+  </nav>
+  <div class="badge-live"><div class="dot"></div>LIVE · Oracle 23ai</div>
+</header>
+ 
+<div class="page">
+  <div class="page-tag">⬡ NODE B · LOCAL DATA + REMOTE QUERY VIA DB LINK</div>
+  <div class="page-title">Algiers <span>Distributed Hub</span></div>
+  <div class="page-desc">Site B owns South region data and queries Site A & C via DB Links. Global views unify all regions.</div>
+ 
+  <div class="stats">
+    <div class="stat"><div class="stat-label">LOCAL TRIPS</div><div class="stat-val" id="s-local" style="color:var(--accent)">...</div><div class="stat-sub">South region</div></div>
+    <div class="stat"><div class="stat-label">REMOTE (A+C)</div><div class="stat-val" id="s-remote" style="color:var(--accent2)">...</div><div class="stat-sub">Via DB Links</div></div>
+    <div class="stat"><div class="stat-label">GLOBAL TRIPS</div><div class="stat-val" id="s-global" style="color:var(--accent3)">...</div><div class="stat-sub">All regions</div></div>
+    <div class="stat"><div class="stat-label">DB LINKS IN</div><div class="stat-val" style="color:var(--success)">1</div><div class="stat-sub">From north_user</div></div>
+  </div>
+ 
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('local')">🏛️ Local Data</div>
+    <div class="tab" onclick="switchTab('global')">🌐 Global View</div>
+    <div class="tab" onclick="switchTab('itinerary')">🗺️ All Itineraries</div>
+    <div class="tab" onclick="switchTab('sql')">💻 SQL</div>
+  </div>
+ 
+  <!-- LOCAL -->
+  <div class="tab-content active" id="tab-local">
+    <div class="table-card">
+      <div class="table-card-header">
+        <div class="table-card-title">✈️ Trips — South Region <span class="frag-badge fb-local">LOCAL</span></div>
+      </div>
+      <div id="site-b-trips"><div class="loading">Loading from Oracle south_user...</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <div class="table-card-title">🧭 Guides — South Region <span class="frag-badge fb-local">LOCAL</span></div>
+      </div>
+      <div id="site-b-guides"><div class="loading">Loading...</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-card-header">
+        <div class="table-card-title">🎭 Cultural Events — South <span class="frag-badge fb-local">LOCAL</span></div>
+      </div>
+      <div id="site-b-events"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+ 
+  <!-- GLOBAL -->
+  <div class="tab-content" id="tab-global">
+    <div class="table-card global">
+      <div class="table-card-header">
+        <div class="table-card-title">🌐 All_Trips — Global View (All 3 Regions) <span class="frag-badge fb-global">GLOBAL VIEW</span></div>
+      </div>
+      <div id="all-trips"><div class="loading">Querying across all nodes via DB Links...</div></div>
+    </div>
+  </div>
+ 
+  <!-- ITINERARY -->
+  <div class="tab-content" id="tab-itinerary">
+    <div class="table-card global">
+      <div class="table-card-header">
+        <div class="table-card-title">🗺️ All Itineraries — Distributed Join <span class="frag-badge fb-global">DISTRIBUTED QUERY</span></div>
+      </div>
+      <div id="all-itinerary"><div class="loading">Running distributed query...</div></div>
+    </div>
+  </div>
+ 
+  <!-- SQL -->
+  <div class="tab-content" id="tab-sql">
+    <div class="sql-panel">
+      <div class="sql-panel-header">
+        <div class="sql-dot" style="background:#ef4444"></div>
+        <div class="sql-dot" style="background:#f59e0b"></div>
+        <div class="sql-dot" style="background:#10b981"></div>
+        distributed_queries.sql · north_user queries across all sites
+      </div>
+      <pre><span class="cm">-- ══════════════════════════════════════════════════════
+-- Global Distributed Queries — Run from north_user
+-- ══════════════════════════════════════════════════════</span>
+ 
+<span class="cm">-- 1. All Trips across 3 regions (via DB Links)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Trips                      <span class="cm">-- North (local)</span>
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="remote-kw">Trips@south_db</span>             <span class="cm">-- South (remote)</span>
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="remote-kw">Trips@east_db</span>;              <span class="cm">-- East (remote)</span>
+ 
+<span class="cm">-- 2. Full itinerary distributed join</span>
+<span class="kw">SELECT</span>
+  b.BookingID,
+  t.NAME        <span class="kw">AS</span> Tourist,
+  b.Amount,
+  tr.REGION,
+  tr.STARTDATE,
+  tr.ENDDATE
+<span class="kw">FROM</span> Bookings b
+<span class="kw">JOIN</span> Tourist_Basic t  <span class="kw">ON</span> b.TouristID = t.TouristID
+<span class="kw">JOIN</span> Trips tr         <span class="kw">ON</span> b.TripID = tr.TripID
+<span class="kw">ORDER BY</span> b.BookingID;
+ 
+<span class="cm">-- 3. Create Global View</span>
+<span class="kw">CREATE VIEW</span> All_Trips <span class="kw">AS</span>
+  <span class="kw">SELECT</span> *, <span class="str">'North'</span> <span class="kw">AS</span> Source <span class="kw">FROM</span> Trips
+  <span class="kw">UNION</span>
+  <span class="kw">SELECT</span> *, <span class="str">'South'</span> <span class="kw">AS</span> Source <span class="kw">FROM</span> <span class="remote-kw">Trips@south_db</span>
+  <span class="kw">UNION</span>
+  <span class="kw">SELECT</span> *, <span class="str">'East'</span>  <span class="kw">AS</span> Source <span class="kw">FROM</span> <span class="remote-kw">Trips@east_db</span>;</pre>
+    </div>
+  </div>
+</div>
+ 
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+ 
+function makeTable(rows, sourceField) {
+  if (!rows || rows.length === 0) return '<div class="loading">No data found</div>';
+  const headers = Object.keys(rows[0]);
+  return `<table>
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}${sourceField ? '<th>SOURCE</th>' : ''}</tr></thead>
+    <tbody>${rows.map(r => `<tr>
+      ${headers.map(h => `<td>${r[h] ?? '-'}</td>`).join('')}
+      ${sourceField ? `<td><span class="remote-tag">${r[sourceField] || 'local'}</span></td>` : ''}
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+ 
+async function load(endpoint, containerId, sourceField) {
+  try {
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    const el = document.getElementById(containerId);
+    if (!data.success) {
+      el.innerHTML = `<div class="error">⚠ ${data.error}</div>`;
+    } else {
+      el.innerHTML = makeTable(data.rows, sourceField);
+    }
+    return data.rows?.length || 0;
+  } catch(e) {
+    document.getElementById(containerId).innerHTML = `<div class="error">⚠ Cannot connect to server. Make sure Node.js is running on port 3000.</div>`;
+    return 0;
+  }
+}
+ 
+async function init() {
+  const local = await load('/api/site-b/trips', 'site-b-trips');
+  load('/api/site-b/guides', 'site-b-guides');
+  load('/api/site-b/events', 'site-b-events');
+  const global_count = await load('/api/global/all-trips', 'all-trips', 'SOURCE');
+  load('/api/global/itinerary', 'all-itinerary');
+ 
+  document.getElementById('s-local').textContent = local;
+  document.getElementById('s-global').textContent = global_count;
+  document.getElementById('s-remote').textContent = Math.max(0, global_count - local);
+}
+init();
+</script>
+</body>
+</html>
