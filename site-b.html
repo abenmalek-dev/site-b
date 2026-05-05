@@ -88,26 +88,25 @@
     <div class="logo-icon">AU</div>
     <div>
       <div class="logo-title">Algiers University</div>
-      <div class="logo-sub">SITE B · south_user · FREEPDB1</div>
+      <div class="logo-sub">SITE B · south_user · PostgreSQL</div>
     </div>
   </div>
   <nav>
     <a href="/">Home</a>
     <a href="site-a.html">Site A</a>
     <a href="site-b.html" class="active">Site B</a>
-    <a href="site-c.html">Site C</a>
   </nav>
-  <div class="badge-live"><div class="dot"></div>LIVE · Oracle 23ai</div>
+  <div class="badge-live"><div class="dot"></div>LIVE · Supabase</div>
 </header>
  
 <div class="page">
   <div class="page-tag">⬡ NODE B · LOCAL DATA + REMOTE QUERY VIA DB LINK</div>
   <div class="page-title">Algiers <span>Distributed Hub</span></div>
-  <div class="page-desc">Site B owns South region data and queries Site A & C via DB Links. Global views unify all regions.</div>
+  <div class="page-desc">Site B owns South region data and queries Site A via API proxy. Global views unify all regions.</div>
  
   <div class="stats">
     <div class="stat"><div class="stat-label">LOCAL TRIPS</div><div class="stat-val" id="s-local" style="color:var(--accent)">...</div><div class="stat-sub">South region</div></div>
-    <div class="stat"><div class="stat-label">REMOTE (A+C)</div><div class="stat-val" id="s-remote" style="color:var(--accent2)">...</div><div class="stat-sub">Via DB Links</div></div>
+    <div class="stat"><div class="stat-label">REMOTE (A)</div><div class="stat-val" id="s-remote" style="color:var(--accent2)">...</div><div class="stat-sub">Via API proxy</div></div>
     <div class="stat"><div class="stat-label">GLOBAL TRIPS</div><div class="stat-val" id="s-global" style="color:var(--accent3)">...</div><div class="stat-sub">All regions</div></div>
     <div class="stat"><div class="stat-label">DB LINKS IN</div><div class="stat-val" style="color:var(--success)">1</div><div class="stat-sub">From north_user</div></div>
   </div>
@@ -119,13 +118,12 @@
     <div class="tab" onclick="switchTab('sql')">💻 SQL</div>
   </div>
  
-  <!-- LOCAL -->
   <div class="tab-content active" id="tab-local">
     <div class="table-card">
       <div class="table-card-header">
         <div class="table-card-title">✈️ Trips — South Region <span class="frag-badge fb-local">LOCAL</span></div>
       </div>
-      <div id="site-b-trips"><div class="loading">Loading from Oracle south_user...</div></div>
+      <div id="site-b-trips"><div class="loading">Loading from Supabase south...</div></div>
     </div>
     <div class="table-card">
       <div class="table-card-header">
@@ -141,17 +139,15 @@
     </div>
   </div>
  
-  <!-- GLOBAL -->
   <div class="tab-content" id="tab-global">
     <div class="table-card global">
       <div class="table-card-header">
-        <div class="table-card-title">🌐 All_Trips — Global View (All 3 Regions) <span class="frag-badge fb-global">GLOBAL VIEW</span></div>
+        <div class="table-card-title">🌐 All_Trips — Global View (North + South) <span class="frag-badge fb-global">GLOBAL VIEW</span></div>
       </div>
-      <div id="all-trips"><div class="loading">Querying across all nodes via DB Links...</div></div>
+      <div id="all-trips"><div class="loading">Querying across all nodes via API proxy...</div></div>
     </div>
   </div>
  
-  <!-- ITINERARY -->
   <div class="tab-content" id="tab-itinerary">
     <div class="table-card global">
       <div class="table-card-header">
@@ -161,27 +157,24 @@
     </div>
   </div>
  
-  <!-- SQL -->
   <div class="tab-content" id="tab-sql">
     <div class="sql-panel">
       <div class="sql-panel-header">
         <div class="sql-dot" style="background:#ef4444"></div>
         <div class="sql-dot" style="background:#f59e0b"></div>
         <div class="sql-dot" style="background:#10b981"></div>
-        distributed_queries.sql · north_user queries across all sites
+        distributed_queries.sql · south_user @ Supabase
       </div>
       <pre><span class="cm">-- ══════════════════════════════════════════════════════
--- Global Distributed Queries — Run from north_user
+-- Global Distributed Queries — Site B perspective
 -- ══════════════════════════════════════════════════════</span>
  
-<span class="cm">-- 1. All Trips across 3 regions (via DB Links)</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> Trips                      <span class="cm">-- North (local)</span>
+<span class="cm">-- 1. All Trips across regions (via API proxy to Site A)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Trips                      <span class="cm">-- South (local)</span>
 <span class="kw">UNION</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="remote-kw">Trips@south_db</span>             <span class="cm">-- South (remote)</span>
-<span class="kw">UNION</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="remote-kw">Trips@east_db</span>;              <span class="cm">-- East (remote)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="remote-kw">Trips@north_db</span>;             <span class="cm">-- North (remote via API)</span>
  
-<span class="cm">-- 2. Full itinerary distributed join</span>
+<span class="cm">-- 2. Full itinerary (proxied from Site A)</span>
 <span class="kw">SELECT</span>
   b.BookingID,
   t.NAME        <span class="kw">AS</span> Tourist,
@@ -192,15 +185,7 @@
 <span class="kw">FROM</span> Bookings b
 <span class="kw">JOIN</span> Tourist_Basic t  <span class="kw">ON</span> b.TouristID = t.TouristID
 <span class="kw">JOIN</span> Trips tr         <span class="kw">ON</span> b.TripID = tr.TripID
-<span class="kw">ORDER BY</span> b.BookingID;
- 
-<span class="cm">-- 3. Create Global View</span>
-<span class="kw">CREATE VIEW</span> All_Trips <span class="kw">AS</span>
-  <span class="kw">SELECT</span> *, <span class="str">'North'</span> <span class="kw">AS</span> Source <span class="kw">FROM</span> Trips
-  <span class="kw">UNION</span>
-  <span class="kw">SELECT</span> *, <span class="str">'South'</span> <span class="kw">AS</span> Source <span class="kw">FROM</span> <span class="remote-kw">Trips@south_db</span>
-  <span class="kw">UNION</span>
-  <span class="kw">SELECT</span> *, <span class="str">'East'</span>  <span class="kw">AS</span> Source <span class="kw">FROM</span> <span class="remote-kw">Trips@east_db</span>;</pre>
+<span class="kw">ORDER BY</span> b.BookingID;</pre>
     </div>
   </div>
 </div>
@@ -215,9 +200,9 @@ function switchTab(name) {
  
 function makeTable(rows, sourceField) {
   if (!rows || rows.length === 0) return '<div class="loading">No data found</div>';
-  const headers = Object.keys(rows[0]);
+  const headers = Object.keys(rows[0]).filter(h => h !== 'source');
   return `<table>
-    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}${sourceField ? '<th>SOURCE</th>' : ''}</tr></thead>
+    <thead><tr>${headers.map(h => `<th>${h.toUpperCase()}</th>`).join('')}${sourceField ? '<th>SOURCE</th>' : ''}</tr></thead>
     <tbody>${rows.map(r => `<tr>
       ${headers.map(h => `<td>${r[h] ?? '-'}</td>`).join('')}
       ${sourceField ? `<td><span class="remote-tag">${r[sourceField] || 'local'}</span></td>` : ''}
@@ -237,16 +222,17 @@ async function load(endpoint, containerId, sourceField) {
     }
     return data.rows?.length || 0;
   } catch(e) {
-    document.getElementById(containerId).innerHTML = `<div class="error">⚠ Cannot connect to server. Make sure Node.js is running on port 3000.</div>`;
+    document.getElementById(containerId).innerHTML = `<div class="error">⚠ Cannot connect to server.</div>`;
     return 0;
   }
 }
  
 async function init() {
-  const local = await load('/api/site-b/trips', 'site-b-trips');
-  load('/api/site-b/guides', 'site-b-guides');
-  load('/api/site-b/events', 'site-b-events');
-  const global_count = await load('/api/global/all-trips', 'all-trips', 'SOURCE');
+  // FIX: corrected API paths — were /api/site-b/... which don't exist on server
+  const local = await load('/api/trips',  'site-b-trips');
+  load('/api/guides', 'site-b-guides');
+  load('/api/events', 'site-b-events');
+  const global_count = await load('/api/global/all-trips',  'all-trips', 'source');
   load('/api/global/itinerary', 'all-itinerary');
  
   document.getElementById('s-local').textContent = local;
